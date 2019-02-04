@@ -30,7 +30,7 @@ copyright = "2019, Travis Clarke"
 author = "Travis Clarke"
 
 # The full version, including alpha/beta/rc tags
-release = __import__("pprintjson").__version__
+release = __import__("mergedeep").__version__
 # The short X.Y version
 version = release
 
@@ -103,7 +103,7 @@ html_theme = "alabaster"
 
 html_theme_options = {
     "github_user": "clarketm",
-    "github_repo": "pprintjson",
+    "github_repo": "mergedeep",
     "github_type": "star",
     "github_banner": "forkme_right_red_aa0000.png",
     "show_powered_by": False,
@@ -130,7 +130,7 @@ html_sidebars = {"**": ["about.html", "localtoc.html", "searchbox.html"]}
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "pprintjsondoc"
+htmlhelp_basename = "mergedeepdoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -156,8 +156,8 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        "pprintjson.tex",
-        "pprintjson Documentation",
+        "mergedeep.tex",
+        "mergedeep Documentation",
         "Travis Clarke",
         "manual",
     )
@@ -168,7 +168,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "pprintjson", "pprintjson Documentation", [author], 1)]
+man_pages = [(master_doc, "mergedeep", "mergedeep Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -179,10 +179,10 @@ man_pages = [(master_doc, "pprintjson", "pprintjson Documentation", [author], 1)
 texinfo_documents = [
     (
         master_doc,
-        "pprintjson",
-        "pprintjson Documentation",
+        "mergedeep",
+        "mergedeep Documentation",
         author,
-        "pprintjson",
+        "mergedeep",
         "One line description of project.",
         "Miscellaneous",
     )
