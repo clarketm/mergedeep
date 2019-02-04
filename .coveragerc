@@ -1,0 +1,10 @@
+[run]
+include =
+    mergedeep/mergedeep.py
+omit =
+    */test_*
+    */__main__.py
+    */__init__.py
+    setup.py
+    manage.py
+    venv/*
