@@ -7,7 +7,7 @@ KT = TypeVar("KT")
 VT = TypeVar("VT")
 
 
-def merge(target: Map[KT, VT], *sources: Map[KT, VT]):
+def merge(target: Map[KT, VT], *sources: Map[KT, VT]) -> Map[KT, VT]:
     """
     A deep merge function for 🐍.
 

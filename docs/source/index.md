@@ -28,6 +28,10 @@ $ pip install mergedeep
 
 ## Usage
 
+```text
+merge(target: Map[KT, VT], *sources: Map[KT, VT]) -> Map[KT, VT]
+```
+
 Deep merge without mutating the source dicts.
 
 ```python
