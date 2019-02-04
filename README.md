@@ -16,7 +16,7 @@ $ pip install mergedeep
 
 ## Usage
 
-Deep merge without mutating the original dict.
+Deep merge without mutating the source dicts.
 
 ```python
 from mergedeep import merge
