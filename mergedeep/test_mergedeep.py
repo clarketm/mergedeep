@@ -2,8 +2,6 @@
 import inspect
 import unittest
 from copy import deepcopy
-from inspect import getmembers
-from unittest.mock import patch
 
 from mergedeep import merge, Strategy
 
