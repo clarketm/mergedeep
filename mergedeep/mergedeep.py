@@ -11,7 +11,7 @@ VT = TypeVar("VT")
 class Strategy(Enum):
     # Replace `target` item with one from `source` (default).
     REPLACE = 0
-    # Combined `list` or `set` tpyes into one collection.
+    # Combined `list` or `set` types into one collection.
     ADDITIVE = 1
     # Raise `TypeError` when `target` and `source` types differ.
     TYPESAFE = 2

@@ -32,7 +32,7 @@ $ pip install mergedeep
 ## Usage
 
 ```text
-merge(target: Map[KT, VT], *sources: Map[KT, VT]) -> Map[KT, VT]
+merge(target: Map[KT, VT], *sources: Map[KT, VT], strategy: Strategy = Strategy.REPLACE) -> Map[KT, VT]
 ```
 
 Deep merge without mutating the source dicts.
@@ -62,6 +62,55 @@ merge(a, b, c)
 
 print(a)
 # {"keyA": 1, "keyB": {"sub1": 10, "sub2": 20}}
+```
+
+### Merge strategies:
+1. Replace (*default*)
+```python
+# Strategy.REPLACE
+# When `target` and `source` values are the same, replace the `target` value with one from `source` (default).
+# Note: with multiple sources, the `last` source value with be what appears in the merged result. 
+
+from mergedeep import merge, Strategy
+
+target = {"key": [1, 2]}
+source = {"key": [3, 4]}
+
+merge(target, source, strategy=Strategy.REPLACE) 
+# same as: merge(target, source) 
+
+print(target)
+# {"key": [3, 4]}
+```
+
+2. Additive
+```python
+# Strategy.ADDITIVE
+# When `target` and `source` values are both either `list` or `set`, extend/update `target` with values from `source` collection.
+
+from mergedeep import merge, Strategy
+
+target = {"key": [1, 2]}
+source = {"key": [3, 4]}
+
+merge(target, source, strategy=Strategy.ADDITIVE) 
+
+print(target)
+# {"key": [1, 2, 3, 4]}
+```
+
+3. Typesafe
+```python
+# Strategy.TYPESAFE
+# When `target` and `source` values are of different types, raise `TypeError`.
+
+from mergedeep import merge, Strategy
+
+target = {"key": [1, 2]}
+source = {"key": {3, 4}}
+
+merge(target, source, strategy=Strategy.TYPESAFE) 
+# TypeError: target type: <class 'list'> differs from source type: <class 'set'> for key: "key"
 ```
 
 ## License
