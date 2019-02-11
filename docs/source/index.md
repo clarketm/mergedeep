@@ -13,6 +13,9 @@ Version |version|
 .. image:: https://img.shields.io/pypi/v/mergedeep.svg
     :target: https://pypi.org/project/mergedeep/
 
+.. image:: https://img.shields.io/pypi/pyversions/mergedeep.svg
+    :target: https://pypi.org/project/mergedeep/
+    
 .. image:: https://pepy.tech/badge/mergedeep
     :target: https://pepy.tech/project/mergedeep
     

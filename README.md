@@ -1,6 +1,7 @@
 # [mergedeep](https://mergedeep.readthedocs.io/en/latest/)
 
 [![PyPi release](https://img.shields.io/pypi/v/mergedeep.svg)](https://pypi.org/project/mergedeep/)
+[![PyPi versions](https://img.shields.io/pypi/pyversions/mergedeep.svg)](https://pypi.org/project/mergedeep/)
 [![Downloads](https://pepy.tech/badge/mergedeep)](https://pepy.tech/project/mergedeep)
 [![Documentation Status](https://readthedocs.org/projects/mergedeep/badge/?version=latest)](https://mergedeep.readthedocs.io/en/latest/?badge=latest)
 

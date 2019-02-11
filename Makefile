@@ -16,7 +16,8 @@ build: clean
 
 .PHONY: test
 test:
-	python -m nose2 --start-dir . --with-coverage --coverage-report "term" --coverage-report "html"
+	pyenv local 3.5.6 3.6.8 system
+	python -m tox
 
 .PHONY: clean
 clean:
