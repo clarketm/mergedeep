@@ -19,17 +19,17 @@ class Strategy(Enum):
 
 def _handle_merge_replace(target, source, key):
     # If a key exists in both objects and the values are `different`, the value from the `source` object will be used.
-    target[key] = source[key]
+    target[key] = deepcopy(source[key])
 
 
 def _handle_merge_additive(target, source, key):
     # List and Set values are combined into one long collection.
     if isinstance(target[key], list) and isinstance(source[key], list):
         # Extend target if both target and source are `list` type.
-        target[key].extend(source[key])
+        target[key].extend(deepcopy(source[key]))
     elif isinstance(target[key], set) and isinstance(source[key], set):
         # Update target if both target and source are `set` type.
-        target[key].update(source[key])
+        target[key].update(deepcopy(source[key]))
     else:
         _handle_merge[Strategy.REPLACE](target, source, key)
 
@@ -78,9 +78,7 @@ def merge(
                     # If a key exists in both objects and the values are `same`, the value from the `target` object will be used.
                     pass
                 else:
-                    _handle_merge.get(strategy, Strategy.REPLACE)(
-                        target, deepcopy(source), key
-                    )
+                    _handle_merge.get(strategy, Strategy.REPLACE)(target, source, key)
             else:
                 # If the key exists only in `source`, the value from the `source` object will be used.
                 target[key] = deepcopy(source[key])
