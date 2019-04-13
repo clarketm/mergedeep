@@ -21,12 +21,13 @@ class test_mergedeep(unittest.TestCase):
             "d": 3,
             "e": {1: 2, "a": {"f": 2}},
             "f": [4, 5, 6],
+            "g": (100, 200),
         }
 
-        a = {"a": {"b": {"c": 5}}, "d": 1, "e": {2: 3}, "f": [1, 2, 3]}
+        a = {"a": {"b": {"c": 5}}, "d": 1, "e": {2: 3}, "f": [1, 2, 3], "g": (2, 4, 6)}
         a_copy = deepcopy(a)
 
-        b = {"a": {"B": {"C": 10}}, "d": 2, "e": 2, "f": [4, 5, 6]}
+        b = {"a": {"B": {"C": 10}}, "d": 2, "e": 2, "f": [4, 5, 6], "g": (100, 200)}
         b_copy = deepcopy(b)
 
         c = {"a": {"b": {"_c": 15}}, "d": 3, "e": {1: 2, "a": {"f": 2}}}
@@ -47,12 +48,13 @@ class test_mergedeep(unittest.TestCase):
             "d": 3,
             "e": {1: 2, "a": {"f": 2}},
             "f": [4, 5, 6],
+            "g": (100, 200),
         }
 
-        a = {"a": {"b": {"c": 5}}, "d": 1, "e": {2: 3}, "f": [1, 2, 3]}
+        a = {"a": {"b": {"c": 5}}, "d": 1, "e": {2: 3}, "f": [1, 2, 3], "g": (2, 4, 6)}
         a_copy = deepcopy(a)
 
-        b = {"a": {"B": {"C": 10}}, "d": 2, "e": 2, "f": [4, 5, 6]}
+        b = {"a": {"B": {"C": 10}}, "d": 2, "e": 2, "f": [4, 5, 6], "g": (100, 200)}
         b_copy = deepcopy(b)
 
         c = {"a": {"b": {"_c": 15}}, "d": 3, "e": {1: 2, "a": {"f": 2}}}
@@ -118,6 +120,63 @@ class test_mergedeep(unittest.TestCase):
         a_copy = deepcopy(a)
 
         b = {"a": {"B": {"C": 10}}, "d": 2, "e": 2, "f": {4, 5, 6}}
+        b_copy = deepcopy(b)
+
+        c = {"a": {"b": {"_c": 15}}, "d": 3, "e": {1: 2, "a": {"f": 2}}}
+        c_copy = deepcopy(c)
+
+        actual = merge({}, a, b, c, strategy=Strategy.ADDITIVE)
+
+        self.assertEqual(actual, expected)
+        self.assertEqual(a, a_copy)
+        self.assertEqual(b, b_copy)
+        self.assertEqual(c, c_copy)
+
+    def test_should_not_copy_references(self):
+        before = 1
+        after = 99
+
+        o1 = {"key1": before}
+        o2 = {"key2": before}
+
+        expected = {"list": deepcopy([o1, o2]), "tuple": deepcopy((o1, o2))}
+
+        a = {"list": [o1], "tuple": (o1,)}
+        b = {"list": [o2], "tuple": (o2,)}
+
+        actual = merge({}, a, b, strategy=Strategy.ADDITIVE)
+
+        o1["key1"] = after
+        o2["key2"] = after
+
+        self.assertEqual(actual, expected)
+
+        # Copied dicts should `not` mutate
+        self.assertEqual(actual["list"][0]["key1"], before)
+        self.assertEqual(actual["list"][1]["key2"], before)
+        self.assertEqual(actual["tuple"][0]["key1"], before)
+        self.assertEqual(actual["tuple"][1]["key2"], before)
+
+        # Non-copied dicts should mutate
+        self.assertEqual(a["list"][0]["key1"], after)
+        self.assertEqual(b["list"][0]["key2"], after)
+        self.assertEqual(a["tuple"][0]["key1"], after)
+        self.assertEqual(b["tuple"][0]["key2"], after)
+
+    def test_should_merge_3_dicts_into_new_dict_using_additive_strategy_on_tupless_and_only_mutate_target(
+        self
+    ):
+        expected = {
+            "a": {"b": {"c": 5, "_c": 15}, "B": {"C": 10}},
+            "d": 3,
+            "e": {1: 2, "a": {"f": 2}},
+            "f": (1, 2, 3, 4, 5, 6),
+        }
+
+        a = {"a": {"b": {"c": 5}}, "d": 1, "e": {2: 3}, "f": (1, 2, 3)}
+        a_copy = deepcopy(a)
+
+        b = {"a": {"B": {"C": 10}}, "d": 2, "e": 2, "f": (4, 5, 6)}
         b_copy = deepcopy(b)
 
         c = {"a": {"b": {"_c": 15}}, "d": 3, "e": {1: 2, "a": {"f": 2}}}

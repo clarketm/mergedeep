@@ -72,7 +72,7 @@ print(target)
 2. Additive
 ```python
 # Strategy.ADDITIVE
-# When `target` and `source` values are both either `list` or `set`, extend/update `target` with values from `source` collection.
+# When `target` and `source` values are both either `list`, `tuple`, or `set`, extend/update `target` with values from `source` collection.
 
 from mergedeep import merge, Strategy
 
