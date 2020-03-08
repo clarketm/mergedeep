@@ -55,7 +55,7 @@ print(a)
 ```python
 # Strategy.REPLACE
 # When `target` and `source` values are the same, replace the `target` value with one from `source` (default).
-# Note: with multiple sources, the `last` source value with be what appears in the merged result. 
+# Note: with multiple sources, the `last` source value will be what appears in the merged result. 
 
 from mergedeep import merge, Strategy
 
