@@ -23,7 +23,7 @@ test-setup:
 
 .PHONY: test
 test: test-setup
-	@pyenv local 3.6.10 3.7.7 3.8.2 system
+	@pyenv local 3.6.10 3.7.7 3.8.2
 	@$(PYTHON) -m tox
 
 .PHONY: clean
@@ -57,6 +57,6 @@ ifdef version
 endif
 
 .PHONY: upload
-publish upload: test clean build check release
+publish upload: test clean build check
 	@twine upload dist/*
 
