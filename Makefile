@@ -57,6 +57,6 @@ ifdef version
 endif
 
 .PHONY: upload
-publish upload: test clean build check
+publish upload: test clean build check release
 	@twine upload dist/*
 

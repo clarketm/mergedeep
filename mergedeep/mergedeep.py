@@ -1,3 +1,4 @@
+from collections import Counter
 from collections.abc import Mapping
 from copy import deepcopy
 from enum import Enum
@@ -11,7 +12,7 @@ VT = TypeVar("VT")
 class Strategy(Enum):
     # Replace `destination` item with one from `source` (default).
     REPLACE = 0
-    # Combined `list`, `tuple`, or `set` types into one collection.
+    # Combine `list`, `tuple`, `set`, or `Counter` types into one collection.
     ADDITIVE = 1
     # Alias to: `TYPESAFE_REPLACE`
     TYPESAFE = 2
@@ -22,12 +23,16 @@ class Strategy(Enum):
 
 
 def _handle_merge_replace(destination, source, key):
-    # If a key exists in both objects and the values are `different`, the value from the `source` object will be used.
-    destination[key] = deepcopy(source[key])
+    if isinstance(destination[key], Counter) and isinstance(source[key], Counter):
+        # Merge both destination and source `Counter` as if they were a standard dict.
+        _deepmerge(destination[key], source[key])
+    else:
+        # If a key exists in both objects and the values are `different`, the value from the `source` object will be used.
+        destination[key] = deepcopy(source[key])
 
 
 def _handle_merge_additive(destination, source, key):
-    # List and Set values are combined into one long collection.
+    # Values are combined into one long collection.
     if isinstance(destination[key], list) and isinstance(source[key], list):
         # Extend destination if both destination and source are `list` type.
         destination[key].extend(deepcopy(source[key]))
@@ -37,6 +42,9 @@ def _handle_merge_additive(destination, source, key):
     elif isinstance(destination[key], tuple) and isinstance(source[key], tuple):
         # Update destination if both destination and source are `tuple` type.
         destination[key] = destination[key] + deepcopy(source[key])
+    elif isinstance(destination[key], Counter) and isinstance(source[key], Counter):
+        # Update destination if both destination and source are `Counter` type.
+        destination[key].update(deepcopy(source[key]))
     else:
         _handle_merge[Strategy.REPLACE](destination, source, key)
 
@@ -60,6 +68,33 @@ _handle_merge = {
 }
 
 
+def _is_recursive_merge(a, b) -> bool:
+    both_mapping = isinstance(a, Mapping) and isinstance(b, Mapping)
+    both_counter = isinstance(a, Counter) and isinstance(b, Counter)
+    return both_mapping and not both_counter
+
+
+def _deepmerge(dst: Map[KT, VT], src: Map[KT, VT], strategy: Strategy = Strategy.REPLACE):
+    """
+    :param dst: Map[KT, VT]:
+    :param src: Map[KT, VT]:
+    """
+    for key in src:
+        if key in dst:
+            if _is_recursive_merge(dst[key], src[key]):
+                # If the key for both `dst` and `src` are both Mapping types (e.g. dict), then recurse.
+                _deepmerge(dst[key], src[key], strategy)
+            elif dst[key] is src[key]:
+                # If a key exists in both objects and the values are `same`, the value from the `dst` object will be used.
+                pass
+            else:
+                _handle_merge.get(strategy)(dst, src, key)
+        else:
+            # If the key exists only in `src`, the value from the `src` object will be used.
+            dst[key] = deepcopy(src[key])
+    return dst
+
+
 def merge(destination: Map[KT, VT], *sources: Map[KT, VT], strategy: Strategy = Strategy.REPLACE) -> Map[KT, VT]:
     """
     A deep merge function for 🐍.
@@ -68,25 +103,4 @@ def merge(destination: Map[KT, VT], *sources: Map[KT, VT], strategy: Strategy = 
     :param *sources: Map[KT, VT]:
     :param strategy: Strategy (Default: Strategy.REPLACE):
     """
-
-    def _deepmerge(dst: Map[KT, VT], src: Map[KT, VT]):
-        """
-        :param dst: Map[KT, VT]:
-        :param src: Map[KT, VT]:
-        """
-        for key in src:
-            if key in dst:
-                if isinstance(dst[key], Mapping) and isinstance(src[key], Mapping):
-                    # If the key for both `dst` and `src` are Mapping types, then recurse.
-                    _deepmerge(dst[key], src[key])
-                elif dst[key] == src[key]:
-                    # If a key exists in both objects and the values are `same`, the value from the `dst` object will be used.
-                    pass
-                else:
-                    _handle_merge.get(strategy, Strategy.REPLACE)(dst, src, key)
-            else:
-                # If the key exists only in `src`, the value from the `src` object will be used.
-                dst[key] = deepcopy(src[key])
-        return dst
-
-    return reduce(_deepmerge, sources, destination)
+    return reduce(partial(_deepmerge, strategy=strategy), sources, destination)

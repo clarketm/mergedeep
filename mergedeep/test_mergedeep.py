@@ -1,6 +1,7 @@
 """mergedeep test module"""
 import inspect
 import unittest
+from collections import Counter
 from copy import deepcopy
 
 from mergedeep import merge, Strategy
@@ -20,15 +21,43 @@ class test_mergedeep(unittest.TestCase):
             "e": {1: 2, "a": {"f": 2}},
             "f": [4, 5, 6],
             "g": (100, 200),
+            "h": Counter({"a": 1, "b": 1, "c": 1}),
+            "i": 2,
+            "j": Counter({"z": 2}),
+            "z": Counter({"a": 2}),
         }
 
-        a = {"a": {"b": {"c": 5}}, "d": 1, "e": {2: 3}, "f": [1, 2, 3], "g": (2, 4, 6)}
+        a = {
+            "a": {"b": {"c": 5}},
+            "d": 1,
+            "e": {2: 3},
+            "f": [1, 2, 3],
+            "g": (2, 4, 6),
+            "h": Counter({"a": 1, "b": 1}),
+            "j": 1,
+        }
         a_copy = deepcopy(a)
 
-        b = {"a": {"B": {"C": 10}}, "d": 2, "e": 2, "f": [4, 5, 6], "g": (100, 200)}
+        b = {
+            "a": {"B": {"C": 10}},
+            "d": 2,
+            "e": 2,
+            "f": [4, 5, 6],
+            "g": (100, 200),
+            "h": Counter({"a": 1, "c": 1}),
+            "i": Counter({"a": 1}),
+            "z": Counter({"a": 2}),
+        }
         b_copy = deepcopy(b)
 
-        c = {"a": {"b": {"_c": 15}}, "d": 3, "e": {1: 2, "a": {"f": 2}}}
+        c = {
+            "a": {"b": {"_c": 15}},
+            "d": 3,
+            "e": {1: 2, "a": {"f": 2}},
+            "i": 2,
+            "j": Counter({"z": 2}),
+            "z": Counter({"a": 2}),
+        }
         c_copy = deepcopy(c)
 
         actual = merge({}, a, b, c, strategy=Strategy.REPLACE)
@@ -45,15 +74,34 @@ class test_mergedeep(unittest.TestCase):
             "e": {1: 2, "a": {"f": 2}},
             "f": [4, 5, 6],
             "g": (100, 200),
+            "h": Counter({"a": 1, "b": 1, "c": 1}),
+            "i": 2,
+            "j": Counter({"z": 2}),
         }
 
-        a = {"a": {"b": {"c": 5}}, "d": 1, "e": {2: 3}, "f": [1, 2, 3], "g": (2, 4, 6)}
+        a = {
+            "a": {"b": {"c": 5}},
+            "d": 1,
+            "e": {2: 3},
+            "f": [1, 2, 3],
+            "g": (2, 4, 6),
+            "h": Counter({"a": 1, "b": 1}),
+            "j": 1,
+        }
         a_copy = deepcopy(a)
 
-        b = {"a": {"B": {"C": 10}}, "d": 2, "e": 2, "f": [4, 5, 6], "g": (100, 200)}
+        b = {
+            "a": {"B": {"C": 10}},
+            "d": 2,
+            "e": 2,
+            "f": [4, 5, 6],
+            "g": (100, 200),
+            "h": Counter({"a": 1, "c": 1}),
+            "i": Counter({"a": 1}),
+        }
         b_copy = deepcopy(b)
 
-        c = {"a": {"b": {"_c": 15}}, "d": 3, "e": {1: 2, "a": {"f": 2}}}
+        c = {"a": {"b": {"_c": 15}}, "d": 3, "e": {1: 2, "a": {"f": 2}}, "i": 2, "j": Counter({"z": 2})}
         c_copy = deepcopy(c)
 
         actual = merge(a, b, c, strategy=Strategy.REPLACE)
@@ -124,6 +172,78 @@ class test_mergedeep(unittest.TestCase):
         self.assertEqual(b, b_copy)
         self.assertEqual(c, c_copy)
 
+    def test_should_merge_3_dicts_into_new_dict_using_additive_strategy_on_tuples_and_only_mutate_target(self,):
+        expected = {
+            "a": {"b": {"c": 5, "_c": 15}, "B": {"C": 10}},
+            "d": 3,
+            "e": {1: 2, "a": {"f": 2}},
+            "f": (1, 2, 3, 4, 5, 6),
+        }
+
+        a = {"a": {"b": {"c": 5}}, "d": 1, "e": {2: 3}, "f": (1, 2, 3)}
+        a_copy = deepcopy(a)
+
+        b = {"a": {"B": {"C": 10}}, "d": 2, "e": 2, "f": (4, 5, 6)}
+        b_copy = deepcopy(b)
+
+        c = {"a": {"b": {"_c": 15}}, "d": 3, "e": {1: 2, "a": {"f": 2}}}
+        c_copy = deepcopy(c)
+
+        actual = merge({}, a, b, c, strategy=Strategy.ADDITIVE)
+
+        self.assertEqual(actual, expected)
+        self.assertEqual(a, a_copy)
+        self.assertEqual(b, b_copy)
+        self.assertEqual(c, c_copy)
+
+    def test_should_merge_3_dicts_into_new_dict_using_additive_strategy_on_counters_and_only_mutate_target(self,):
+        expected = {
+            "a": {"b": {"c": 5, "_c": 15}, "B": {"C": 10}},
+            "d": 3,
+            "e": {1: 2, "a": {"f": 2}},
+            "f": Counter({"a": 2, "c": 1, "b": 1}),
+            "i": 2,
+            "j": Counter({"z": 2}),
+            "z": Counter({"a": 4}),
+        }
+
+        a = {
+            "a": {"b": {"c": 5}},
+            "d": 1,
+            "e": {2: 3},
+            "f": Counter({"a": 1, "c": 1}),
+            "i": Counter({"f": 9}),
+            "j": Counter({"a": 1, "z": 4}),
+        }
+        a_copy = deepcopy(a)
+
+        b = {
+            "a": {"B": {"C": 10}},
+            "d": 2,
+            "e": 2,
+            "f": Counter({"a": 1, "b": 1}),
+            "j": [1, 2, 3],
+            "z": Counter({"a": 2}),
+        }
+        b_copy = deepcopy(b)
+
+        c = {
+            "a": {"b": {"_c": 15}},
+            "d": 3,
+            "e": {1: 2, "a": {"f": 2}},
+            "i": 2,
+            "j": Counter({"z": 2}),
+            "z": Counter({"a": 2}),
+        }
+        c_copy = deepcopy(c)
+
+        actual = merge({}, a, b, c, strategy=Strategy.ADDITIVE)
+
+        self.assertEqual(actual, expected)
+        self.assertEqual(a, a_copy)
+        self.assertEqual(b, b_copy)
+        self.assertEqual(c, c_copy)
+
     def test_should_not_copy_references(self):
         before = 1
         after = 99
@@ -155,30 +275,6 @@ class test_mergedeep(unittest.TestCase):
         self.assertEqual(a["tuple"][0]["key1"], after)
         self.assertEqual(b["tuple"][0]["key2"], after)
 
-    def test_should_merge_3_dicts_into_new_dict_using_additive_strategy_on_tupless_and_only_mutate_target(self,):
-        expected = {
-            "a": {"b": {"c": 5, "_c": 15}, "B": {"C": 10}},
-            "d": 3,
-            "e": {1: 2, "a": {"f": 2}},
-            "f": (1, 2, 3, 4, 5, 6),
-        }
-
-        a = {"a": {"b": {"c": 5}}, "d": 1, "e": {2: 3}, "f": (1, 2, 3)}
-        a_copy = deepcopy(a)
-
-        b = {"a": {"B": {"C": 10}}, "d": 2, "e": 2, "f": (4, 5, 6)}
-        b_copy = deepcopy(b)
-
-        c = {"a": {"b": {"_c": 15}}, "d": 3, "e": {1: 2, "a": {"f": 2}}}
-        c_copy = deepcopy(c)
-
-        actual = merge({}, a, b, c, strategy=Strategy.ADDITIVE)
-
-        self.assertEqual(actual, expected)
-        self.assertEqual(a, a_copy)
-        self.assertEqual(b, b_copy)
-        self.assertEqual(c, c_copy)
-
     ##############################################################################################################################
     # TYPESAFE
     # TYPESAFE_REPLACE
@@ -209,15 +305,16 @@ class test_mergedeep(unittest.TestCase):
             "f": [4, 5, 6],
             "g": {2, 3, 4},
             "h": (1, 3),
+            "z": Counter({"a": 1, "b": 1, "c": 1}),
         }
 
-        a = {"a": {"b": {"c": 5}}, "d": 1, "f": [1, 2, 3], "g": {1, 2, 3}}
+        a = {"a": {"b": {"c": 5}}, "d": 1, "f": [1, 2, 3], "g": {1, 2, 3}, "z": Counter({"a": 1, "b": 1})}
         a_copy = deepcopy(a)
 
         b = {"a": {"B": {"C": 10}}, "d": 2, "f": [4, 5, 6], "g": {2, 3, 4}, "h": (1,)}
         b_copy = deepcopy(b)
 
-        c = {"a": {"b": {"_c": 15}}, "d": 3, "h": (1, 3)}
+        c = {"a": {"b": {"_c": 15}}, "d": 3, "h": (1, 3), "z": Counter({"a": 1, "c": 1})}
         c_copy = deepcopy(c)
 
         actual = merge({}, a, b, c, strategy=Strategy.TYPESAFE)
@@ -236,15 +333,16 @@ class test_mergedeep(unittest.TestCase):
             "f": [4, 5, 6],
             "g": {2, 3, 4},
             "h": (1, 3),
+            "z": Counter({"a": 1, "b": 1, "c": 1}),
         }
 
-        a = {"a": {"b": {"c": 5}}, "d": 1, "f": [1, 2, 3], "g": {1, 2, 3}}
+        a = {"a": {"b": {"c": 5}}, "d": 1, "f": [1, 2, 3], "g": {1, 2, 3}, "z": Counter({"a": 1, "b": 1})}
         a_copy = deepcopy(a)
 
         b = {"a": {"B": {"C": 10}}, "d": 2, "f": [4, 5, 6], "g": {2, 3, 4}, "h": (1,)}
         b_copy = deepcopy(b)
 
-        c = {"a": {"b": {"_c": 15}}, "d": 3, "h": (1, 3)}
+        c = {"a": {"b": {"_c": 15}}, "d": 3, "h": (1, 3), "z": Counter({"a": 1, "c": 1})}
         c_copy = deepcopy(c)
 
         actual = merge({}, a, b, c, strategy=Strategy.TYPESAFE_REPLACE)
@@ -275,15 +373,16 @@ class test_mergedeep(unittest.TestCase):
             "f": [1, 2, 3, 4, 5, 6],
             "g": {1, 2, 3, 4},
             "h": (1, 1, 3),
+            "z": Counter({"a": 2, "b": 1, "c": 1}),
         }
 
-        a = {"a": {"b": {"c": 5}}, "d": 1, "f": [1, 2, 3], "g": {1, 2, 3}}
+        a = {"a": {"b": {"c": 5}}, "d": 1, "f": [1, 2, 3], "g": {1, 2, 3}, "z": Counter({"a": 1, "b": 1})}
         a_copy = deepcopy(a)
 
         b = {"a": {"B": {"C": 10}}, "d": 2, "f": [4, 5, 6], "g": {2, 3, 4}, "h": (1,)}
         b_copy = deepcopy(b)
 
-        c = {"a": {"b": {"_c": 15}}, "d": 3, "h": (1, 3)}
+        c = {"a": {"b": {"_c": 15}}, "d": 3, "h": (1, 3), "z": Counter({"a": 1, "c": 1})}
         c_copy = deepcopy(c)
 
         actual = merge({}, a, b, c, strategy=Strategy.TYPESAFE_ADDITIVE)

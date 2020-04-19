@@ -65,11 +65,15 @@ print(a)
 ```
 
 ### Merge strategies:
+
 * Replace (*default*)
+
+> `Strategy.REPLACE`
+
 ```python3
-# Strategy.REPLACE
 # When `destination` and `source` values are the same, replace the `destination` value with one from `source` (default).
-# Note: with multiple sources, the `last` source value will be what appears in the merged result. 
+
+# Note: with multiple sources, the `last` (i.e. rightmost) source value will be what appears in the merged result. 
 
 from mergedeep import merge, Strategy
 
@@ -84,9 +88,14 @@ print(dst)
 ```
 
 * Additive
+
+> `Strategy.ADDITIVE`
+
 ```python3
-# Strategy.ADDITIVE
-# When `destination` and `source` values are both either `list`, `tuple`, or `set`, extend/update `destination` with values from `source` collection.
+# When `destination` and `source` values are both the same additive collection type, extend `destination` by adding values from `source`.
+# Additive collection types include: `list`, `tuple`, `set`, and `Counter`
+
+# Note: if the values are not additive collections of the same type, then fallback to a `REPLACE` merge.
 
 from mergedeep import merge, Strategy
 
@@ -100,8 +109,10 @@ print(dst)
 ```
 
 * Typesafe replace
+
+> `Strategy.TYPESAFE_REPLACE` or `Strategy.TYPESAFE`
+
 ```python3
-# Strategy.TYPESAFE_REPLACE or Strategy.TYPESAFE 
 # When `destination` and `source` values are of different types, raise `TypeError`. Otherwise, perform a `REPLACE` merge.
 
 from mergedeep import merge, Strategy
@@ -114,8 +125,10 @@ merge(dst, src, strategy=Strategy.TYPESAFE_REPLACE) # same as: `Strategy.TYPESAF
 ```
 
 * Typesafe additive
+
+> `Strategy.TYPESAFE_ADDITIVE`
+
 ```python3
-# Strategy.TYPESAFE_ADDITIVE
 # When `destination` and `source` values are of different types, raise `TypeError`. Otherwise, perform a `ADDITIVE` merge.
 
 from mergedeep import merge, Strategy
