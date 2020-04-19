@@ -60,7 +60,7 @@ _handle_merge = {
 }
 
 
-def merge(destination: Map[KT, VT], *sources: Map[KT, VT], strategy: Strategy = Strategy.REPLACE,) -> Map[KT, VT]:
+def merge(destination: Map[KT, VT], *sources: Map[KT, VT], strategy: Strategy = Strategy.REPLACE) -> Map[KT, VT]:
     """
     A deep merge function for 🐍.
 
@@ -69,24 +69,24 @@ def merge(destination: Map[KT, VT], *sources: Map[KT, VT], strategy: Strategy = 
     :param strategy: Strategy (Default: Strategy.REPLACE):
     """
 
-    def _deepmerge(destination: Map[KT, VT], source: Map[KT, VT]):
+    def _deepmerge(dst: Map[KT, VT], src: Map[KT, VT]):
         """
-        :param destination: Map[KT, VT]:
-        :param source: Map[KT, VT]:
+        :param dst: Map[KT, VT]:
+        :param src: Map[KT, VT]:
         """
-        for key in source:
-            if key in destination:
-                if isinstance(destination[key], Mapping) and isinstance(source[key], Mapping):
-                    # If the key for both `destination` and `source` are Mapping types, then recurse.
-                    _deepmerge(destination[key], source[key])
-                elif destination[key] == source[key]:
-                    # If a key exists in both objects and the values are `same`, the value from the `destination` object will be used.
+        for key in src:
+            if key in dst:
+                if isinstance(dst[key], Mapping) and isinstance(src[key], Mapping):
+                    # If the key for both `dst` and `src` are Mapping types, then recurse.
+                    _deepmerge(dst[key], src[key])
+                elif dst[key] == src[key]:
+                    # If a key exists in both objects and the values are `same`, the value from the `dst` object will be used.
                     pass
                 else:
-                    _handle_merge.get(strategy, Strategy.REPLACE)(destination, source, key)
+                    _handle_merge.get(strategy, Strategy.REPLACE)(dst, src, key)
             else:
-                # If the key exists only in `source`, the value from the `source` object will be used.
-                destination[key] = deepcopy(source[key])
-        return destination
+                # If the key exists only in `src`, the value from the `src` object will be used.
+                dst[key] = deepcopy(src[key])
+        return dst
 
     return reduce(_deepmerge, sources, destination)
