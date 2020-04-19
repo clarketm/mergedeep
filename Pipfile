@@ -5,7 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 black = "*"
-tox = "*"
+tox = "<3.8"
 twine = "*"
 pytest = "*"
 tox-pyenv = "*"
