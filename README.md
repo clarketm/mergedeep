@@ -85,13 +85,13 @@ print(dst)
 
 from mergedeep import merge, Strategy
 
-dst = {"key": [1, 2]}
-src = {"key": [3, 4]}
+dst = {"key": [1, 2], "count": Counter({"a": 1, "b": 1})}
+src = {"key": [3, 4], "count": Counter({"a": 1, "c": 1})}
 
 merge(dst, src, strategy=Strategy.ADDITIVE) 
 
 print(dst)
-# {"key": [1, 2, 3, 4]}
+# {"key": [1, 2, 3, 4], "count": Counter({"a": 2, "b": 1, "c": 1})}
 ```
 
 3. Typesafe replace
