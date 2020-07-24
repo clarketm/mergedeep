@@ -57,7 +57,7 @@ print(a)
 > `Strategy.REPLACE`
 
 ```python3
-# When `destination` and `source` values are the same, replace the `destination` value with one from `source` (default).
+# When `destination` and `source` keys are the same, replace the `destination` value with one from `source` (default).
 
 # Note: with multiple sources, the `last` (i.e. rightmost) source value will be what appears in the merged result. 
 
