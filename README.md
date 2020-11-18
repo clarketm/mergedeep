@@ -3,6 +3,8 @@
 [![PyPi release](https://img.shields.io/pypi/v/mergedeep.svg)](https://pypi.org/project/mergedeep/)
 [![PyPi versions](https://img.shields.io/pypi/pyversions/mergedeep.svg)](https://pypi.org/project/mergedeep/)
 [![Downloads](https://pepy.tech/badge/mergedeep)](https://pepy.tech/project/mergedeep)
+[![Conda Version](https://img.shields.io/conda/vn/conda-forge/mergedeep.svg)](https://anaconda.org/conda-forge/mergedeep)
+[![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/mergedeep.svg)](https://anaconda.org/conda-forge/mergedeep)
 [![Documentation Status](https://readthedocs.org/projects/mergedeep/badge/?version=latest)](https://mergedeep.readthedocs.io/en/latest/?badge=latest)
 
 A deep merge function for 🐍.
