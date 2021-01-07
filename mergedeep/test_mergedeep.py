@@ -21,7 +21,7 @@ class test_mergedeep(unittest.TestCase):
             "e": {1: 2, "a": {"f": 2}},
             "f": [4, 5, 6],
             "g": (100, 200),
-            "h": Counter({"a": 1, "b": 1, "c": 1}),
+            "h": Counter({"a": 5, "b": 1, "c": 1}),
             "i": 2,
             "j": Counter({"z": 2}),
             "z": Counter({"a": 2}),
@@ -44,7 +44,7 @@ class test_mergedeep(unittest.TestCase):
             "e": 2,
             "f": [4, 5, 6],
             "g": (100, 200),
-            "h": Counter({"a": 1, "c": 1}),
+            "h": Counter({"a": 5, "c": 1}),
             "i": Counter({"a": 1}),
             "z": Counter({"a": 2}),
         }

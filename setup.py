@@ -1,5 +1,3 @@
-import re
-
 import setuptools, os
 
 
@@ -8,16 +6,11 @@ def open_local(paths, mode="r", encoding="utf8"):
     return open(path, mode=mode, encoding=encoding)
 
 
-with open_local(["mergedeep", "__init__.py"]) as f:
-    version = re.search(r"__version__ = [\"'](\d+\.\d+\.\d+)[\"']", f.read()).group(1)
-
 with open_local(["README.md"]) as f:
     long_description = f.read()
 
-
 setuptools.setup(
     name="mergedeep",
-    version=version,
     author="Travis Clarke",
     author_email="travis.m.clarke@gmail.com",
     description="A deep merge function for 🐍.",
@@ -31,6 +24,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ),
