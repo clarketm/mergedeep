@@ -3,10 +3,7 @@ from collections.abc import Mapping
 from copy import deepcopy
 from enum import Enum
 from functools import reduce, partial
-from typing import TypeVar, MutableMapping as Map
-
-KT = TypeVar("KT")
-VT = TypeVar("VT")
+from typing import Dict
 
 
 class Strategy(Enum):
@@ -74,10 +71,10 @@ def _is_recursive_merge(a, b) -> bool:
     return both_mapping and not both_counter
 
 
-def _deepmerge(dst: Map[KT, VT], src: Map[KT, VT], strategy: Strategy = Strategy.REPLACE):
+def _deepmerge(dst: Dict, src: Dict, strategy: Strategy = Strategy.REPLACE):
     """
-    :param dst: Map[KT, VT]:
-    :param src: Map[KT, VT]:
+    :param dst: Dict:
+    :param src: Dict:
     """
     for key in src:
         if key in dst:
@@ -95,12 +92,12 @@ def _deepmerge(dst: Map[KT, VT], src: Map[KT, VT], strategy: Strategy = Strategy
     return dst
 
 
-def merge(destination: Map[KT, VT], *sources: Map[KT, VT], strategy: Strategy = Strategy.REPLACE) -> Map[KT, VT]:
+def merge(destination: Dict, *sources: Dict, strategy: Strategy = Strategy.REPLACE) -> Dict:
     """
     A deep merge function for 🐍.
 
-    :param destination: Map[KT, VT]:
-    :param *sources: Map[KT, VT]:
+    :param destination: Dict:
+    :param *sources: Dict:
     :param strategy: Strategy (Default: Strategy.REPLACE):
     """
     return reduce(partial(_deepmerge, strategy=strategy), sources, destination)

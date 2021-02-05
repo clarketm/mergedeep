@@ -20,7 +20,7 @@ $ pip install mergedeep
 ## Usage
 
 ```text
-merge(destination: Map[KT, VT], *sources: Map[KT, VT], strategy: Strategy = Strategy.REPLACE) -> Map[KT, VT]
+merge(destination: Dict, *sources: Dict, strategy: Strategy = Strategy.REPLACE) -> Dict
 ```
 
 Deep merge without mutating the source dicts.

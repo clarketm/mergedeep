@@ -19,6 +19,7 @@ setuptools.setup(
     url="https://github.com/clarketm/mergedeep",
     python_requires=">=3.6",
     packages=setuptools.find_packages(),
+    package_data={"mergedeep": ["py.typed"]},
     classifiers=(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
