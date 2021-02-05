@@ -3,7 +3,7 @@ from collections.abc import Mapping
 from copy import deepcopy
 from enum import Enum
 from functools import reduce, partial
-from typing import Dict
+from typing import MutableMapping
 
 
 class Strategy(Enum):
@@ -65,17 +65,13 @@ _handle_merge = {
 }
 
 
-def _is_recursive_merge(a, b) -> bool:
+def _is_recursive_merge(a, b):
     both_mapping = isinstance(a, Mapping) and isinstance(b, Mapping)
     both_counter = isinstance(a, Counter) and isinstance(b, Counter)
     return both_mapping and not both_counter
 
 
-def _deepmerge(dst: Dict, src: Dict, strategy: Strategy = Strategy.REPLACE):
-    """
-    :param dst: Dict:
-    :param src: Dict:
-    """
+def _deepmerge(dst, src, strategy=Strategy.REPLACE):
     for key in src:
         if key in dst:
             if _is_recursive_merge(dst[key], src[key]):
@@ -92,12 +88,13 @@ def _deepmerge(dst: Dict, src: Dict, strategy: Strategy = Strategy.REPLACE):
     return dst
 
 
-def merge(destination: Dict, *sources: Dict, strategy: Strategy = Strategy.REPLACE) -> Dict:
+def merge(destination: MutableMapping, *sources: Mapping, strategy: Strategy = Strategy.REPLACE) -> MutableMapping:
     """
     A deep merge function for 🐍.
 
-    :param destination: Dict:
-    :param *sources: Dict:
-    :param strategy: Strategy (Default: Strategy.REPLACE):
+    :param destination: The destination mapping.
+    :param sources: The source mappings.
+    :param strategy: The merge strategy.
+    :return:
     """
     return reduce(partial(_deepmerge, strategy=strategy), sources, destination)

@@ -32,7 +32,7 @@ $ pip install mergedeep
 ## Usage
 
 ```text
-merge(destination: Dict, *sources: Dict, strategy: Strategy = Strategy.REPLACE) -> Dict
+merge(destination: MutableMapping, *sources: Mapping, strategy: Strategy = Strategy.REPLACE) -> Mapping
 ```
 
 Deep merge without mutating the source dicts.

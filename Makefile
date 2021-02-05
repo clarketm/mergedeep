@@ -20,10 +20,11 @@ test-setup:
 	@pyenv install -s 3.6.10
 	@pyenv install -s 3.7.7
 	@pyenv install -s 3.8.2
+	@pyenv install -s 3.9.1
 
 .PHONY: test
 test: test-setup
-	@pyenv local 3.6.10 3.7.7 3.8.2
+	@pyenv local 3.6.10 3.7.7 3.8.2 3.9.1
 	@$(PYTHON) -m tox
 
 .PHONY: clean
