@@ -1,7 +1,7 @@
 """mergedeep test module"""
 import inspect
 import unittest
-from collections import Counter
+from collections import Counter, OrderedDict
 from copy import deepcopy
 
 from mergedeep import merge, Strategy
@@ -9,6 +9,18 @@ from mergedeep import merge, Strategy
 
 class test_mergedeep(unittest.TestCase):
     """mergedeep function tests."""
+
+    def test_typesafe_rejects_different_nested_mapping_types(self):
+        for strategy in (Strategy.TYPESAFE, Strategy.TYPESAFE_REPLACE, Strategy.TYPESAFE_ADDITIVE):
+            for mapping in (Counter, OrderedDict):
+                with self.subTest(strategy=strategy, mapping=mapping):
+                    destination = {"nested": mapping({"a": 1})}
+                    original = deepcopy(destination)
+                    source = {"nested": {"b": 2}}
+                    with self.assertRaises(TypeError):
+                        merge(destination, source, strategy=strategy)
+                    self.assertEqual(destination, original)
+                    self.assertEqual(source, {"nested": {"b": 2}})
 
     ##############################################################################################################################
     # REPLACE

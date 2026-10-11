@@ -72,9 +72,12 @@ def _is_recursive_merge(a, b):
 
 
 def _deepmerge(dst, src, strategy=Strategy.REPLACE):
+    typesafe = strategy in (Strategy.TYPESAFE, Strategy.TYPESAFE_REPLACE, Strategy.TYPESAFE_ADDITIVE)
     for key in src:
         if key in dst:
-            if _is_recursive_merge(dst[key], src[key]):
+            if typesafe and type(dst[key]) is not type(src[key]):
+                _handle_merge[strategy](dst, src, key)
+            elif _is_recursive_merge(dst[key], src[key]):
                 # If the key for both `dst` and `src` are both Mapping types (e.g. dict), then recurse.
                 _deepmerge(dst[key], src[key], strategy)
             elif dst[key] is src[key]:
