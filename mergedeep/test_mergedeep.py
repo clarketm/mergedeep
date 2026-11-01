@@ -1,4 +1,5 @@
 """mergedeep test module"""
+import pytest
 import inspect
 import unittest
 from collections import Counter
@@ -395,3 +396,19 @@ class test_mergedeep(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@pytest.mark.parametrize("strategy", list(Strategy))
+@pytest.mark.parametrize("same_root", [False, True])
+def test_merge_identical_cyclic_mapping_is_a_noop(strategy, same_root):
+    shared = {"values": [1, 2]}
+    shared["self"] = shared
+    destination = {"node": shared}
+    source = destination if same_root else {"node": shared}
+
+    result = merge(destination, source, strategy=strategy)
+
+    assert result is destination
+    assert destination["node"] is shared
+    assert shared["self"] is shared
+    assert shared["values"] == [1, 2]
