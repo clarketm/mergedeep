@@ -74,12 +74,12 @@ def _is_recursive_merge(a, b):
 def _deepmerge(dst, src, strategy=Strategy.REPLACE):
     for key in src:
         if key in dst:
-            if _is_recursive_merge(dst[key], src[key]):
+            if dst[key] is src[key]:
+                # Identical values need no merge, including self-referential mappings.
+                pass
+            elif _is_recursive_merge(dst[key], src[key]):
                 # If the key for both `dst` and `src` are both Mapping types (e.g. dict), then recurse.
                 _deepmerge(dst[key], src[key], strategy)
-            elif dst[key] is src[key]:
-                # If a key exists in both objects and the values are `same`, the value from the `dst` object will be used.
-                pass
             else:
                 _handle_merge.get(strategy)(dst, src, key)
         else:
